@@ -1,0 +1,12 @@
+
+# Dependencies:
+
+## Gammu:
+    * http://wammu.eu/download/gammu/
+
+## install python-gammu:
+    apt-get install python-gammu 
+
+# Configure:
+
+1. run gammu-config 
