@@ -8,15 +8,13 @@
 # --payment=
 #
 # Usage: 
-#       ./sendsms.sh file.csv 'message' --name=1 --device=2 --number=3 --vehicle=4
+#       ./sendsms.sh file.csv 'message' --name=1 --device=2 --number=3 
 #
 # MESAJES:
-#       Apreciado $name, le informamos que su sistema de rastreo satelital para el vehiculo $placa esta para pago inmediato. Haga caso omiso si ya realizo su pago  
 #      
 # Dependencias:
 #    - Gammu
-#
-#
+
 # Author: Jolth
 #
 
