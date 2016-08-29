@@ -15,12 +15,22 @@ csv.register_dialect("comcel", delimiter='|')
 template = Template(sys.argv[1]) 
 print("Template:", template.template) # debug
 
-def firstName(name):
-    return name.split(' ')[0]
+#def firstName(name):
+#    return name.split(' ')[0]
 
-with open(sys.argv[2], r'rt') as f:
-    reader = csv.DictReader(f)
-    for row in reader:
-        name = firstName(row["name"])
-        t = template.substitute(name=name)
-        print(t)
+#with open(sys.argv[2], r'rt') as f:
+#    reader = csv.DictReader(f)
+#    for row in reader:
+#        name = firstName(row["name"])
+#        t = template.substitute(name=name)
+#        print(t)
+
+def reader(f):
+    """reader file csv.
+    example: buffer = (r.__next__() for r in reader(file.csv))"""
+    with open(f, r'rt') as f:
+        field = csv.DictReader(f)
+        yield field
+
+buffer = (r.__next__() for r in reader(sys.argv[2]))
+for b in buffer:print(b)
