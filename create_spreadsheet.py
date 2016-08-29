@@ -23,8 +23,11 @@ def reader(f):
 def temParsing(buffer, template):
     """template parsing"""
     print("Template:", template.template) # debug
-    for row in buffer:
-        yield template.substitute(row)
+    try:
+        for row in buffer:
+            yield template.substitute(row)
+    except KeyError as e:
+        print("{0} key not existing into .csv".format(e))
 
 
 if __name__ == "__main__":
