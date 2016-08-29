@@ -10,27 +10,50 @@ import sys
 import csv
 from string import Template
 
-csv.register_dialect("comcel", delimiter='|')
-
-template = Template(sys.argv[1]) 
-print("Template:", template.template) # debug
-
-#def firstName(name):
-#    return name.split(' ')[0]
-
-#with open(sys.argv[2], r'rt') as f:
-#    reader = csv.DictReader(f)
-#    for row in reader:
-#        name = firstName(row["name"])
-#        t = template.substitute(name=name)
-#        print(t)
+#csv.register_dialect("comcel", delimiter='|')
 
 def reader(f):
     """reader file csv.
-    example: buffer = (r.__next__() for r in reader(file.csv))"""
+    example: r = reader(file.csv); r.__next__()"""
     with open(f, r'rt') as f:
         field = csv.DictReader(f)
-        yield field
+        for row in field:
+            yield row
 
-buffer = (r.__next__() for r in reader(sys.argv[2]))
-for b in buffer:print(b)
+def temParsing(buffer, template):
+    """template parsing"""
+    print("Template:", template.template) # debug
+    for row in buffer:
+        yield template.substitute(row)
+
+
+if __name__ == "__main__":
+    template = Template(sys.argv[1]) 
+
+    #buffer = (r.__next__() for r in reader(sys.argv[2]))
+    #for b in buffer:print(b)
+    #for m in temParsing(buffer, template): print(m) # debug
+
+    #debug
+    #for row in reader(sys.argv[2]):
+    #    if row["name"]: print(row, end='\n\n')
+
+    reads = reader(sys.argv[2])
+    #debug
+    #try:
+    #    print(reads.__next__(), end='\n\n')
+    #    print(reads.__next__(), end='\n\n')
+    #    print(reads.__next__(), end='\n\n')
+    #    print(reads.__next__(), end='\n\n')
+    #    print(reads.__next__(), end='\n\n')
+    #    print(reads.__next__(), end='\n\n')
+    #except StopIteration:
+    #    print("Stop Iteration")
+
+    #for r in reads:
+    #    print(r,end='\n\n')
+
+    t = temParsing(reads, template)
+    #t = temParsing(reads, template)
+    for r in t:
+       print(r)
