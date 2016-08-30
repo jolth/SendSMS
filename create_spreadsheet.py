@@ -26,7 +26,8 @@ def temparsing(buffer, template):
     print("Template:", template.template) # debug
     try:
         for row in buffer:
-            yield (row, template.substitute(row))
+            yield (row, template.substitute(row, 
+                name=row['name'].split(' ')[0]))
     except KeyError as e:
         print("{0} key not existing into .csv".format(e))
 
@@ -40,5 +41,6 @@ def comcelwriter(f, buffer):
 if __name__ == "__main__":
     template = Template(sys.argv[1]) 
     reads = reader(sys.argv[2])
+    
     b = temparsing(reads, template)
     comcelwriter(sys.argv[3], b)
