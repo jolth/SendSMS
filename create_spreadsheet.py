@@ -20,43 +20,25 @@ def reader(f):
         for row in field:
             yield row
 
-def temParsing(buffer, template):
+
+def temparsing(buffer, template):
     """template parsing"""
     print("Template:", template.template) # debug
     try:
         for row in buffer:
-            yield template.substitute(row)
+            yield (row, template.substitute(row))
     except KeyError as e:
         print("{0} key not existing into .csv".format(e))
 
 
+def comcelwriter(f, buffer):
+    with open(f, r'wt') as f:
+        for k, d in buffer: 
+            f.write("{0[phone]}|{1}\n".format(k, d))
+
+
 if __name__ == "__main__":
     template = Template(sys.argv[1]) 
-
-    #buffer = (r.__next__() for r in reader(sys.argv[2]))
-    #for b in buffer:print(b)
-    #for m in temParsing(buffer, template): print(m) # debug
-
-    #debug
-    #for row in reader(sys.argv[2]):
-    #    if row["name"]: print(row, end='\n\n')
-
     reads = reader(sys.argv[2])
-    #debug
-    #try:
-    #    print(reads.__next__(), end='\n\n')
-    #    print(reads.__next__(), end='\n\n')
-    #    print(reads.__next__(), end='\n\n')
-    #    print(reads.__next__(), end='\n\n')
-    #    print(reads.__next__(), end='\n\n')
-    #    print(reads.__next__(), end='\n\n')
-    #except StopIteration:
-    #    print("Stop Iteration")
-
-    #for r in reads:
-    #    print(r,end='\n\n')
-
-    t = temParsing(reads, template)
-    #t = temParsing(reads, template)
-    for r in t:
-       print(r)
+    b = temparsing(reads, template)
+    comcelwriter(sys.argv[3], b)
