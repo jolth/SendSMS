@@ -23,7 +23,8 @@ def reader(f):
 
 def temparsing(buffer, template):
     """template parsing"""
-    print("Template:", template.template) # debug
+    print("Template [length: {1}]: {0}".format(template.template,
+        len(template.template))) # debug
     try:
         for row in buffer:
             yield (row, template.substitute(row, 
