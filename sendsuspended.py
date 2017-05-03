@@ -34,8 +34,9 @@ def db_reader(cursor):
 
 if __name__ == "__main__":
     #connect db
-    conn = psycopg2.connect("dbname={0} user={1}\
+    connect = psycopg2.connect("dbname={0} user={1}\
             password={2}".format(arg.dbname, arg.user, arg.password))
+    cursor = connect.cursor()
     raise SystemExit
 
     reader = db_reader()
