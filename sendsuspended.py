@@ -14,7 +14,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument("-d", action="store", dest="dbname")
 parser.add_argument("-u", action="store", dest="user")
 parser.add_argument("-W", action="store", dest="password")
-parser.add_argument("-c", action="store", dest="csvfile")
+parser.add_argument("-f", action="store", dest="csvfile")
 arg = parser.parse_args()
 
 
