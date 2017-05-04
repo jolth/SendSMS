@@ -7,6 +7,7 @@ import sys
 import csv
 import argparse
 import psycopg2
+import datetime
 
 parser = argparse.ArgumentParser(
         description="Location the to vehicles suspended"
@@ -29,8 +30,12 @@ def db_reader(cursor):
     while True:
             plate = (yield)
             if plate:
-                cursor.execute("SELECT * FROM vehiculos WHERE placa='{0}';".format(plate.lower()))
-                print(cursor.fetchone())
+                #cursor.execute("SELECT * FROM vehiculos WHERE placa='{0}';".format(plate.lower()))
+                cursor.execute("SELECT v.placa, lp.ubicacion, lp.fecha FROM vehiculos v,\
+                        gps g, last_positions_gps lp WHERE g.id=lp.gps_id and\
+                        v.gps_id=g.id and v.placa='{0}';".format(plate.lower()))
+                print([i.strftime("%a %b %d %H:%M:%S %Y") for i in
+                    cursor.fetchone() if isinstance(i,datetime.datetime)])
 
 
 if __name__ == "__main__":
