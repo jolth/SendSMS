@@ -19,10 +19,13 @@ parser.add_argument("-o", action="store", dest="outfile", help="out file",
         default="out.csv")
 arg = parser.parse_args()
 
+fnames = ("location", "date")
+fieldnames = []
 
 def csv_reader(csvfile):
     with open(csvfile, r'rt') as f:
         reader = csv.DictReader(f)
+        fieldnames.extend(reader.fieldnames) #extract field names of the csv file
         for row in reader:
             yield row
 
@@ -30,10 +33,9 @@ def csv_reader(csvfile):
 def db_reader(cursor):
     while True:
             row = (yield)
-            cursor.execute("SELECT v.placa, lp.ubicacion, lp.fecha FROM vehiculos v,\
+            cursor.execute("SELECT lp.ubicacion, lp.fecha FROM vehiculos v,\
                     gps g, last_positions_gps lp WHERE g.id=lp.gps_id and\
                     v.gps_id=g.id and v.placa='{0}';".format(row['plate'].lower()))
-            fnames = ("plate", "location", "date")
             row.update(zip(fnames, cursor.fetchone()))
 
 
@@ -48,6 +50,7 @@ def if_working(row):
 def csv_writer(): pass
 
 
+
 if __name__ == "__main__":
     connect = psycopg2.connect("dbname={0} user={1}\
             password={2}".format(arg.dbname, arg.user, arg.password))
@@ -60,7 +63,9 @@ if __name__ == "__main__":
             if row['plate']:
                 reader.send(row)
                 if_working(row)
-                print(row['working'])
+                #print(row['working'])
+                print(row)
+        print(fieldnames)
 
 
     connect.commit()
