@@ -16,6 +16,8 @@ parser.add_argument("-d", action="store", dest="dbname", help="database name")
 parser.add_argument("-u", action="store", dest="user", help="database user name")
 parser.add_argument("-W", action="store", dest="password", help="database password")
 parser.add_argument("-f", action="store", dest="csvfile", help="csv file")
+parser.add_argument("-o", action="store", dest="outfile", help="out file",
+        default="out.csv")
 arg = parser.parse_args()
 
 
