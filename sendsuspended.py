@@ -38,7 +38,15 @@ def db_reader(cursor):
             row.update(zip(fnames, cursor.fetchone()))
 
 
-def if_working(): pass
+def if_working(row):
+    row['date'] = datetime.datetime(row['date'].year, row['date'].month, row['date'].day, row['date'].hour,
+            row['date'].minute, row['date'].second)
+    if row['date'] > (datetime.datetime.now() - datetime.timedelta(minutes=10)):
+        row['working'] = 'Y'
+    else:
+        row['working'] = 'N'
+
+def csv_writer(): pass
 
 
 if __name__ == "__main__":
@@ -49,11 +57,11 @@ if __name__ == "__main__":
     reader = db_reader(cursor)
     reader.__next__()
     if arg.csvfile:
-        print(arg.csvfile)
         for row in csv_reader(arg.csvfile):
             if row['plate']:
                 reader.send(row)
-                print(row)
+                if_working(row)
+                print(row['working'])
 
 
     connect.commit()
