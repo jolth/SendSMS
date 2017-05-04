@@ -12,10 +12,10 @@ import datetime
 parser = argparse.ArgumentParser(
         description="Location the to vehicles suspended"
     )
-parser.add_argument("-d", action="store", dest="dbname")
-parser.add_argument("-u", action="store", dest="user")
-parser.add_argument("-W", action="store", dest="password")
-parser.add_argument("-f", action="store", dest="csvfile")
+parser.add_argument("-d", action="store", dest="dbname", help="database name")
+parser.add_argument("-u", action="store", dest="user", help="database user name")
+parser.add_argument("-W", action="store", dest="password" help="database password")
+parser.add_argument("-f", action="store", dest="csvfile", help="csv file")
 arg = parser.parse_args()
 
 
