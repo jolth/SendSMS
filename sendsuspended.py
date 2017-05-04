@@ -10,11 +10,11 @@ import psycopg2
 import datetime
 
 parser = argparse.ArgumentParser(
-        description="Location the to vehicles suspended"
+        description="Location the to vehicles suspended", add_help=True
     )
 parser.add_argument("-d", action="store", dest="dbname", help="database name")
 parser.add_argument("-u", action="store", dest="user", help="database user name")
-parser.add_argument("-W", action="store", dest="password" help="database password")
+parser.add_argument("-W", action="store", dest="password", help="database password")
 parser.add_argument("-f", action="store", dest="csvfile", help="csv file")
 arg = parser.parse_args()
 
@@ -28,14 +28,16 @@ def csv_reader(csvfile):
 
 def db_reader(cursor):
     while True:
-            plate = (yield)
-            if plate:
-                #cursor.execute("SELECT * FROM vehiculos WHERE placa='{0}';".format(plate.lower()))
+            row = (yield)
+            if row['plate']:
                 cursor.execute("SELECT v.placa, lp.ubicacion, lp.fecha FROM vehiculos v,\
                         gps g, last_positions_gps lp WHERE g.id=lp.gps_id and\
-                        v.gps_id=g.id and v.placa='{0}';".format(plate.lower()))
-                print([i.strftime("%a %b %d %H:%M:%S %Y") for i in
-                    cursor.fetchone() if isinstance(i,datetime.datetime)])
+                        v.gps_id=g.id and v.placa='{0}';".format(row['plate'].lower()))
+                fnames = ("plate", "location", "date")
+                row.update(zip(fnames, cursor.fetchone()))
+                print(row)
+                
+                
 
 
 if __name__ == "__main__":
@@ -48,7 +50,8 @@ if __name__ == "__main__":
     if arg.csvfile:
         print(arg.csvfile)
         for row in csv_reader(arg.csvfile):
-            reader.send(row['plate'])
+            reader.send(row)
+            #print(row)
 
     connect.commit()
     cursor.close()
