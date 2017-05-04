@@ -35,9 +35,6 @@ def db_reader(cursor):
                         v.gps_id=g.id and v.placa='{0}';".format(row['plate'].lower()))
                 fnames = ("plate", "location", "date")
                 row.update(zip(fnames, cursor.fetchone()))
-                print(row)
-                
-                
 
 
 if __name__ == "__main__":
@@ -51,7 +48,7 @@ if __name__ == "__main__":
         print(arg.csvfile)
         for row in csv_reader(arg.csvfile):
             reader.send(row)
-            #print(row)
+            #if row['plate']: print(row)
 
     connect.commit()
     cursor.close()
