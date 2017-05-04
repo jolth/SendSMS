@@ -31,12 +31,14 @@ def csv_reader(csvfile):
 def db_reader(cursor):
     while True:
             row = (yield)
-            if row['plate']:
-                cursor.execute("SELECT v.placa, lp.ubicacion, lp.fecha FROM vehiculos v,\
-                        gps g, last_positions_gps lp WHERE g.id=lp.gps_id and\
-                        v.gps_id=g.id and v.placa='{0}';".format(row['plate'].lower()))
-                fnames = ("plate", "location", "date")
-                row.update(zip(fnames, cursor.fetchone()))
+            cursor.execute("SELECT v.placa, lp.ubicacion, lp.fecha FROM vehiculos v,\
+                    gps g, last_positions_gps lp WHERE g.id=lp.gps_id and\
+                    v.gps_id=g.id and v.placa='{0}';".format(row['plate'].lower()))
+            fnames = ("plate", "location", "date")
+            row.update(zip(fnames, cursor.fetchone()))
+
+
+def if_working(): pass
 
 
 if __name__ == "__main__":
@@ -49,8 +51,10 @@ if __name__ == "__main__":
     if arg.csvfile:
         print(arg.csvfile)
         for row in csv_reader(arg.csvfile):
-            reader.send(row)
-            #if row['plate']: print(row)
+            if row['plate']:
+                reader.send(row)
+                print(row)
+
 
     connect.commit()
     cursor.close()
