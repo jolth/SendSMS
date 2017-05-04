@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Copyright (c) 2017 Jorge Toro.
-# $ python sendsuspended.py -u postgres -d rastree -W qwerty
+# $ python sendsuspended.py -u postgres -d rastree -W qwerty -f suspendidos.csv
 """send sms to the your suspended"""
 from __future__ import print_function
 import sys
@@ -29,18 +29,22 @@ def db_reader(cursor):
     while True:
             plate = (yield)
             if plate:
-                pass
+                cursor.execute("SELECT * FROM vehiculos WHERE placa='{0}';".format(plate.lower()))
+                print(cursor.fetchone())
 
 
 if __name__ == "__main__":
-    #connect db
     connect = psycopg2.connect("dbname={0} user={1}\
             password={2}".format(arg.dbname, arg.user, arg.password))
     cursor = connect.cursor()
-    raise SystemExit
 
-    reader = db_reader()
+    reader = db_reader(cursor)
     reader.__next__()
     if arg.csvfile:
+        print(arg.csvfile)
         for row in csv_reader(arg.csvfile):
             reader.send(row['plate'])
+
+    connect.commit()
+    cursor.close()
+    connect.close()
