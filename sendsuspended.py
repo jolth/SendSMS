@@ -2,7 +2,6 @@
 # Copyright (c) 2017 Jorge Toro.
 # $ python sendsuspended.py -u postgres -d rastree -W qwerty -f suspendidos.csv
 """send sms to the your suspended"""
-from __future__ import print_function
 import sys
 import csv
 import argparse
