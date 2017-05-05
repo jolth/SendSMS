@@ -7,6 +7,7 @@ import csv
 import argparse
 import psycopg2
 import datetime
+import time
 
 parser = argparse.ArgumentParser(
         description="Location the to vehicles suspended", add_help=True
@@ -21,22 +22,26 @@ arg = parser.parse_args()
 
 fnames = ("location", "date")
 fieldnames = []
+with open(arg.csvfile) as f:
+    r = csv.DictReader(f)
+    fieldnames.extend(r.fieldnames) #extract field names of the csv file
+fieldnames.extend(fnames)
+
 
 def csv_reader(csvfile):
     with open(csvfile, r'rt') as f:
         reader = csv.DictReader(f)
-        fieldnames.extend(reader.fieldnames) #extract field names of the csv file
         for row in reader:
             yield row
 
 
 def db_reader(cursor):
     while True:
-            row = (yield)
-            cursor.execute("SELECT lp.ubicacion, lp.fecha FROM vehiculos v,\
-                    gps g, last_positions_gps lp WHERE g.id=lp.gps_id and\
-                    v.gps_id=g.id and v.placa='{0}';".format(row['plate'].lower()))
-            row.update(zip(fnames, cursor.fetchone()))
+        row = (yield)
+        cursor.execute("SELECT lp.ubicacion, lp.fecha FROM vehiculos v,\
+                gps g, last_positions_gps lp WHERE g.id=lp.gps_id and\
+                v.gps_id=g.id and v.placa='{0}';".format(row['plate'].lower()))
+        row.update(zip(fnames, cursor.fetchone()))
 
 
 def if_working(row):
@@ -47,8 +52,16 @@ def if_working(row):
     else:
         row['working'] = 'N'
 
-def csv_writer(): pass
 
+def csv_writer(csvfile):
+    with open(csvfile, r'wt') as f:
+        writer = csv.DictWriter(f, fieldnames)
+        writer.writeheader()
+        while True:
+            row = (yield)
+            print("write:", row)#debug
+            time.sleep(0.1)#debug
+            writer.writerow(row)
 
 
 if __name__ == "__main__":
@@ -58,15 +71,14 @@ if __name__ == "__main__":
 
     reader = db_reader(cursor)
     reader.__next__()
+    writer = csv_writer(arg.outfile)
+    writer.__next__()
     if arg.csvfile:
         for row in csv_reader(arg.csvfile):
             if row['plate']:
                 reader.send(row)
                 if_working(row)
-                #print(row['working'])
-                print(row)
-        print(fieldnames)
-
+                writer.send(row)
 
     connect.commit()
     cursor.close()
