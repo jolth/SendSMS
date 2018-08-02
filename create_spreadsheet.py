@@ -42,9 +42,7 @@ def comcelwriter(f, buffer):
                 for p in phones:
                     f.write("{0}|{1}\n".format(p, d))
             else:
-                # f.write("{0[phone]}|{1}\n".format(k, d))
                 f.write("{0}|{1}\n".format(phone, d))
-                # print(phone)
 
 
 if __name__ == "__main__":
